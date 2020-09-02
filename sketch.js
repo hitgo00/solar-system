@@ -28,7 +28,7 @@ const sketch = ({ context }) => {
 
   // Setup a camera
   const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 100);
-  camera.position.set(3, 3, -5);
+  camera.position.set(12, 2, -14);
   camera.lookAt(new THREE.Vector3());
 
   // Setup camera controller
@@ -43,33 +43,82 @@ const sketch = ({ context }) => {
   const loader = new THREE.TextureLoader();
   const textureEarth = loader.load('earth.jpg');
   const moonTexture = loader.load('moon.jpg');
+  const sunTexture = loader.load('sun.jpg');
+  const marsTexture = loader.load('mars.jpg');
+  const jupiterTexture = loader.load('jupiter.jpg');
+
+  const milkywayTexture = loader.load('milky_way.jpg');
+  // milkywayTexture.wrapS = milkywayTexture.wrapT = THREE.RepeatWrapping;
+  // milkywayTexture.repeat.set(1, 3);
+
+  scene.background = milkywayTexture;
 
   // Setup a material
-  const material = new THREE.MeshStandardMaterial({
+  const earthMaterial = new THREE.MeshStandardMaterial({
     roughness: 1,
     metalness: 0,
     map: textureEarth,
   });
+  const earthGroup = new THREE.Group();
 
-  const moonGroup = new THREE.Group();
   const moonMaterial = new THREE.MeshStandardMaterial({
     roughness: 1,
     metalness: 0,
     map: moonTexture,
   });
+  const moonGroup = new THREE.Group();
+
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    roughness: 1,
+    metalness: 0,
+    map: sunTexture,
+  });
+
+  const marsMaterial = new THREE.MeshStandardMaterial({
+    roughness: 1,
+    metalness: 0,
+    map: marsTexture,
+  });
+  const marsGroup = new THREE.Group();
+
+  const jupiterMaterial = new THREE.MeshStandardMaterial({
+    roughness: 1,
+    metalness: 0,
+    map: jupiterTexture,
+  });
+  const jupiterGroup = new THREE.Group();
 
   // Setup a mesh with geometry + material
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  const earthMesh = new THREE.Mesh(geometry, earthMaterial);
+  earthMesh.position.set(10, 1, 0);
+  earthGroup.add(earthMesh);
+  // scene.add(earthMesh);
 
   const moonMesh = new THREE.Mesh(geometry, moonMaterial);
-  moonMesh.position.set(1.5, 0.8, 0);
+  moonMesh.position.set(1.4, 0.4, 0);
   moonMesh.scale.setScalar(0.25);
   moonGroup.add(moonMesh);
-  scene.add(moonGroup);
+  earthMesh.add(moonGroup);
+
+  const marsMesh = new THREE.Mesh(geometry, marsMaterial);
+  marsMesh.position.set(15, 1.2, 0);
+  marsGroup.add(marsMesh);
+
+  const jupiterMesh = new THREE.Mesh(geometry, jupiterMaterial);
+  jupiterMesh.position.set(22, -1, 0);
+  jupiterMesh.scale.setScalar(1.5);
+  jupiterGroup.add(jupiterMesh);
+
+  const sunMesh = new THREE.Mesh(geometry, sunMaterial);
+  sunMesh.position.set(0, 0, 0);
+  sunMesh.scale.setScalar(4);
+  scene.add(sunMesh);
+  scene.add(earthGroup);
+  scene.add(marsGroup);
+  scene.add(jupiterGroup);
 
   const light = new THREE.PointLight('white', 2);
-  light.position.set(3, 3, 0);
+  light.position.set(0, 0, 0);
   scene.add(light);
 
   // scene.add(new THREE.GridHelper(5, 50));
@@ -86,9 +135,17 @@ const sketch = ({ context }) => {
     },
     // Update & render your scene here
     render({ time }) {
-      mesh.rotation.y = time * 0.4;
-      moonMesh.rotation.y = time * 0.1;
-      moonGroup.rotation.y = time;
+      console.log(time);
+      earthMesh.rotation.y = time * 0.4;
+      earthGroup.rotation.y = time * 0.3;
+      moonMesh.rotation.y = time * 0.2;
+      moonGroup.rotation.y = time * 0.7;
+      marsMesh.rotation.y = time * 0.4;
+      marsGroup.rotation.y = time * 0.15;
+      jupiterMesh.rotation.y = time * 0.7;
+      jupiterGroup.rotation.y = time * 0.04;
+      sunMesh.rotation.y = time * 0.02;
+
       controls.update();
       renderer.render(scene, camera);
     },
